@@ -76,7 +76,7 @@ public class Obstacle_Push : MonoBehaviour {
         nowPik = 0;
         obstacle = false;
         transform.tag = "Field";
-        transform.SetParent(GameObject.Find("Field").transform);
+        //transform.SetParent(GameObject.Find("Field").transform);//ただの置物として扱う
         move = true;
         //Destroy(this);
     }

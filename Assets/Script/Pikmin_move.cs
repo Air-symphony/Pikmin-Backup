@@ -24,7 +24,7 @@ public class Pikmin_move : MonoBehaviour {
     private bool carryMove = false;//運んでいるかどうか
     private GameObject ItemList;
     //---MoveObstacle()--------------------
-    private bool brakeMove = false;//障害物を処理しているか
+   public bool brakeMove = false;//障害物を処理しているか
     //
     private GameObject balance;
     //private GameObject ObstacleList;
@@ -63,7 +63,7 @@ public class Pikmin_move : MonoBehaviour {
                 target.GetComponent<Pellet>().RemoveCarryPik();
                 carryMove = false;
             }
-            else if (brakeMove)
+            else if (brakeMove && target != null)
             {
                 if (target.name == "WallType")
                 {
@@ -76,13 +76,13 @@ public class Pikmin_move : MonoBehaviour {
                 brakeMove = false;
             }
             target = null;
-            if (Vector3.Distance(transform.position,player.transform.position) > 40.0f)//original
+            /*if (Vector3.Distance(transform.position,player.transform.position) > 40.0f)//original
             {
                 status = false;
-            }
+            }*/
             //agent.SetDestination(point.transform.position);
         }
-        else
+        else//連れていない状態
         {
             bodyColor.material.color = new Color(0, 255, 0);//待機
             transform.SetParent(indepedent.transform);
@@ -95,19 +95,18 @@ public class Pikmin_move : MonoBehaviour {
                 pikmin.Move(Gravity(new Vector3(0, 0, 0)));
                 if (carryMove)//運んでいる状態
                 {
-                    bodyColor.material.color = new Color(0, 0, 255);//待機
+                    bodyColor.material.color = new Color(0, 0, 255);//緑
                     CarryItem();
                 }
                 else if (brakeMove)//障害物処理
                 {
-                    bodyColor.material.color = new Color(255, 255, 0);
+                    bodyColor.material.color = new Color(255, 255, 0);//黄
                     MoveObstacle();
-                }//待機中
-                else
+                }
+                else//待機中
                 {
                     HitMeeting();//StartCoroutine("hitMeeting");
                     TargetItem();
-                    TargetObstacle();
                 }
             }
         }
@@ -315,43 +314,17 @@ public class Pikmin_move : MonoBehaviour {
         }
     }
 
-    private void TargetObstacle()
-    {
-        float r = 3.0f;
-        if (target == null)
-        {
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitObject, r)||
-                Physics.Raycast(transform.position, transform.TransformDirection(Vector3.left), out hitObject, r)||
-                Physics.Raycast(transform.position, transform.TransformDirection(Vector3.right), out hitObject, r))
-            {
-                if (hitObject.collider.tag == "Obstacle")
-                {
-                    target = hitObject.collider.gameObject;
-                    if (target.name == "WallType")
-                    {
-                        brakeMove = true;
-                        target.GetComponent<Obstacle_Wall>().AddNowPik();
-                    }
-                    else if (target.name == "PushType")
-                    {
-                        brakeMove = true;
-                        target.GetComponent<Obstacle_Push>().AddNowPik();
-                    }
-                }
-            }
-        }
-    }
-
     private void MoveObstacle()
     {
+        //壁タイプの作業
         if (target.name == "WallType")
         {
             if(target.GetComponent<Obstacle_Wall>().Check()){//作業中か否か
-                target.GetComponent<Obstacle_Wall>().Finish();
                 target = null;
                 brakeMove = false;
             }
         }
+        //押すタイプの作業
         else if (target.name == "PushType")
         {
             if (target.GetComponent<Obstacle_Push>().Check())
@@ -468,5 +441,16 @@ public class Pikmin_move : MonoBehaviour {
     public void SetV0(Vector3 v)
     {
         v0 = v;
+    }
+
+    public void setbrakeMove(bool boolean)
+    {
+        brakeMove = boolean;
+    }
+
+    public void setTarget(GameObject Object)
+    {
+        target = Object;
+        brakeMove = true;
     }
 }

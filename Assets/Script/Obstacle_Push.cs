@@ -11,40 +11,62 @@ public class Obstacle_Push : MonoBehaviour {
     private GameObject cam;
     private float t = 0.0f;
     private float move_t = 5.0f;//移動時間
-    private bool move;
-
+    private bool move_finish = true;
 
     // Use this for initialization
     void Start () {
         cam = GameObject.Find("Camera");
         text = this.gameObject.transform.GetChild(0).gameObject;
         endposition = transform.position + transform.TransformDirection(new Vector3(0, 0, 10));
-        move = false;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (nowPik >= 1)
+        //障害物であるとき
+        if (obstacle)
         {
-            text.SetActive(true);
-            GetComponentInChildren<TextMesh>().text = nowPik + "/" + needPik;
-            GetComponentInChildren<TextMesh>().transform.rotation = cam.transform.rotation;
+            if (nowPik > 0)
+            {
+                text.SetActive(true);
+                GetComponentInChildren<TextMesh>().text = nowPik + "/" + needPik;
+                GetComponentInChildren<TextMesh>().transform.rotation = cam.transform.rotation;
+            }
+            else
+            {
+                text.SetActive(false);
+            }
         }
         else
         {
-            text.SetActive(false);
-        }
-        if (!obstacle || move)
-        {
-            Vector3 dir = (endposition - transform.position) / move_t;
-            t += Time.deltaTime;
-            if (t >= move_t)
+            if (move_finish == false)
             {
-                transform.position = endposition;
-                move = false;
-                t = 0.0f;
+                Vector3 dir = (endposition - transform.position) / move_t;
+                t += Time.deltaTime;
+                if (t >= move_t)
+                {
+                    transform.position = endposition;
+                    move_finish = true;
+                    t = 0.0f;
+                }
+                transform.position = transform.position + dir * t;
             }
-            transform.position = transform.position + dir * t;
+        }
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        //まだ動かしてない時
+        if (obstacle) {
+            GameObject pikmin = other.gameObject;
+            if (pikmin.tag == "Pikmin")
+            {
+                if (pikmin.GetComponent<Pikmin_move>().brakeMove == false &&
+                    pikmin.GetComponent<Pikmin_move>().status == false)
+                {
+                    other.GetComponent<Pikmin_move>().setTarget(this.gameObject);
+                    nowPik++;
+                }
+            }
         }
     }
 
@@ -60,11 +82,6 @@ public class Obstacle_Push : MonoBehaviour {
         return needPik <= nowPik;
     }
 
-    public void AddNowPik()
-    {
-        nowPik++;
-    }
-
     public void RemoveNowPik()
     {
         nowPik--;
@@ -76,8 +93,8 @@ public class Obstacle_Push : MonoBehaviour {
         nowPik = 0;
         obstacle = false;
         transform.tag = "Field";
+        text.SetActive(false);
         //transform.SetParent(GameObject.Find("Field").transform);//ただの置物として扱う
-        move = true;
-        //Destroy(this);
+        move_finish = false;//動き始める
     }
 }

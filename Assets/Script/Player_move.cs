@@ -6,22 +6,20 @@ public class Player_move : MonoBehaviour {
     private InputAccess input;
     public GameObject cam;
     public GameObject whistle;
-    private Vector3 v = new Vector3(0, 8.0f, 5.0f);
-    private Vector3 v0;
-    public GameObject setpoint;//集合点
-    private int distancsetpoint = 2;//z座標の値
     private GameObject follow;
     private GameObject indepedent;
-    private Vector3 move;
+    private UI ui;
+    private GameObject pointer;
+
     private const float GRAVITY = 9.8f;
+    public GameObject setpoint;//集合点
+    private int distancsetpoint = 2;//z座標の値
     private float moveSpeed = 10.0f;
     private int controlPik_MAX = 5;//同時射出限界値
     private GameObject[] controlPik;
     private GameObject whi;
     private bool start_whi;
     private float whistle_t;
-    private UI ui;
-    private GameObject pointer;
 
     private GameObject balance;
 
@@ -33,11 +31,8 @@ public class Player_move : MonoBehaviour {
         controlPik = new GameObject[controlPik_MAX];
         ui = GameObject.Find("Canvas").GetComponent<UI>();
         pointer = GameObject.Find("Throwpoint");
-        v0 = v;
 
         input = new InputAccess();
-        
-        //transform.position = new Vector3(-5, 3, -5);
     }
 
     // Update is called once per frame
@@ -99,10 +94,6 @@ public class Player_move : MonoBehaviour {
             {
                 //Debug.Log("Goal");
                 ui.FinishWindow();
-                /*if (key)
-                {
-                    Debug.Log("print home");
-                }*/
             }
         }
 
@@ -233,7 +224,7 @@ public class Player_move : MonoBehaviour {
         GameObject obj = null;      
         foreach (Transform child in follow.transform)
         {
-            if (distancsetpoint + 1 > Vector3.Distance(child.transform.position, transform.position))//半径以内のpikminを探す
+            if (distancsetpoint + 3 > Vector3.Distance(child.transform.position, transform.position))//半径以内のpikminを探す
             {
                 obj = child.gameObject;
                 break;
@@ -259,8 +250,6 @@ public class Player_move : MonoBehaviour {
     {
         float maxr = 6.0f;
         float speed = 5.0f;
-        GameObject pointer = GameObject.Find("Throwpoint");
-            //transform.FindChild("Throwpoint").gameObject;
         if (key)//押した1Fのみ
         {
             start_whi = true;
@@ -347,10 +336,5 @@ public class Player_move : MonoBehaviour {
         {
             setpoint.transform.position += move;
         }
-    }
-
-    private void SetThrowPoint(Vector3 v)
-    {
-        pointer.GetComponent<Pointer>().SetV0(v);
     }
 }

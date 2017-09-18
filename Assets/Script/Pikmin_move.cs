@@ -12,14 +12,15 @@ public class Pikmin_move : MonoBehaviour {
     private Renderer bodyColor;
     private GameObject target;//目標物
     //---shot()-----------------------
-    private float shotSpeed = 2.0f;
+    private const float shotSpeed = 2.0f;
     public bool flying;//飛んでいるかどうか
     private RaycastHit hitObject;//投げて当たった物体
-    //private Pointer pointer;
+    private Pointer pointer;
+    private const float flying_time = 2.0f;
     private float t = 0.0f;
-    private Vector3 v0 = new Vector3(0, 8.0f, 5.0f);
-    private Vector3 pos;
-    private Vector3 start = new Vector3(0, 0, 0);
+    private Vector3 landing_point = new Vector3(0, 0, 0);//投げた時の着地点
+    private Vector3 v_0 = new Vector3(0, 10.0f, 0);
+    private Vector3 d_position, start_position;
     //---carryItem()-----------------------
     private bool carryMove = false;//運んでいるかどうか
     private GameObject ItemList;
@@ -41,7 +42,7 @@ public class Pikmin_move : MonoBehaviour {
         follow = GameObject.Find("Follow");
         indepedent = GameObject.Find("Indepedent");
         ItemList = GameObject.Find("ItemList");
-        //pointer = GameObject.Find("Throwpoint").GetComponent<Pointer>();
+        pointer = GameObject.Find("Throwpoint").GetComponent<Pointer>();
         bodyColor = GetComponent<Renderer>();
         //agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         //agent.speed = moveSpeed;
@@ -111,47 +112,7 @@ public class Pikmin_move : MonoBehaviour {
             }
         }
     }
-
-    /*void FixedUpdate()
-    {
-        if (flying)
-        {
-            float y;
-            if (t <= 0)
-            {
-                status = false;
-                transform.rotation = player.transform.rotation;
-                transform.position = player.transform.position + player.transform.TransformDirection(new Vector3(0, 0, -1));
-                start = transform.position;//射出初期座標
-                pos = transform.position;//座標の保存用
-            }
-            t += shotSpeed * Time.deltaTime;
-            y = v0.y * t - 0.5f * 9.8f * t * t;
-            Vector3 deltaPos = transform.TransformDirection(new Vector3(0, y, v0.z * t));//移動先のベクトル
-            transform.position = start + deltaPos;//初期座標から変化した座標
-
-            Debug.DrawRay(pos, (transform.position - pos), Color.green, 1.0f);//Rayの描画
-            if (Physics.Raycast(pos, transform.position - pos, out hitObject, Vector3.Distance(pos, transform.position)))
-            {//不具合あり
-                if (hitObject.collider.tag == "Field")//床のみ判定
-                {
-                    t = 0.0f;
-                    transform.position = hitObject.point + new Vector3(0, 1.0f * transform.localScale.y, 0);
-                    flying = false;
-                }
-            }
-            if (transform.position.y < -2.0f)
-            {
-                t = 0.0f;
-                transform.position = transform.position + new Vector3(0, 2.0f * transform.localScale.y, 0);
-                Debug.Log(transform.name + " doesn't arrive.");
-                flying = false;
-            }
-            pos = transform.position;
-        }
-    }
-    */
-
+    
     private void MoveContoller()
     {
         Vector3 move = new Vector3(0, 0, 0);
@@ -189,24 +150,26 @@ public class Pikmin_move : MonoBehaviour {
 
     public bool Shot()
     {
-        float y;
+        //初期設定
         if (!flying)
         {
             status = false;
             transform.rotation = player.transform.rotation;
             transform.position = player.transform.position + player.transform.TransformDirection(new Vector3(0, 0, -1));
-            start = transform.position;//射出初期座標
-            pos = transform.position;//座標の保存用
+            start_position = d_position = transform.position;
+            //Z軸の初速度の設定、ワールド座標からローカルへ変更
+            v_0.z = transform.InverseTransformDirection(pointer.transform.position - transform.position).z / flying_time;
         }
         t += shotSpeed * Time.deltaTime;
-        y = v0.y * t - 0.5f * 9.8f * t * t;
-        Vector3 deltaPos = start + transform.TransformDirection(new Vector3(0, y, v0.z * t));//初期座標から変化した座標
+        float y = v_0.y * t - 0.5f * 9.8f * t * t;
+
         //初期座標から変化した座標 = 射出初期座標 + 移動先のベクトル
+        Vector3 deltaPos = start_position + transform.TransformDirection(new Vector3(0, y, v_0.z * t));//初期座標から変化した座標
         //transform.position = start + deltaPos;//初期座標から変化した座標
 
-        Debug.DrawRay(pos, (deltaPos - pos), Color.green, 1.0f);//Rayの描画
+        Debug.DrawRay(d_position, (deltaPos - d_position), Color.green, 1.0f);//Rayの描画
         RaycastHit[] hits;
-        hits = Physics.RaycastAll(pos, deltaPos - pos, Vector3.Distance(pos, deltaPos));
+        hits = Physics.RaycastAll(d_position, deltaPos - d_position, Vector3.Distance(d_position, deltaPos));
         for (int i = hits.Length - 1; i >= 0; i--)
         {
             if (hits[i].collider.tag == "Field" || hits[i].collider.tag == "Obstacle")//床と障害物の判定
@@ -227,7 +190,7 @@ public class Pikmin_move : MonoBehaviour {
             return false;
         }
         transform.position = deltaPos;
-        pos = transform.position;
+        d_position = transform.position;
         flying = true;
         return true;
     }
@@ -437,12 +400,7 @@ public class Pikmin_move : MonoBehaviour {
     {
         return flying;
     }
-
-    public void SetV0(Vector3 v)
-    {
-        v0 = v;
-    }
-
+    
     public void setbrakeMove(bool boolean)
     {
         brakeMove = boolean;

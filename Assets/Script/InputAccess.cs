@@ -12,24 +12,24 @@ public class InputAccess : MonoBehaviour {
     
     public void InputPlayerKey()
     {
-        up = false;
+        /*up = false;
         down = false;
         left = false;
         right = false;
         horizontal = 0;
-        vertical = 0;
+        vertical = 0;*/
 
         decide = false;
         meeting = false;
         wait = false;
 
-        up |= Input.GetKey(KeyCode.UpArrow);
+        /*up |= Input.GetKey(KeyCode.UpArrow);
         down |= Input.GetKey(KeyCode.DownArrow);
         left |= Input.GetKey(KeyCode.LeftArrow);
         right |= Input.GetKey(KeyCode.RightArrow);
 
         horizontal = Input.GetAxis("Horizontal");
-        vertical = Input.GetAxis("Vertical");
+        vertical = Input.GetAxis("Vertical");*/
 
         decide |= Input.GetButtonDown("Circle");
         decide |= Input.GetKeyDown(KeyCode.Space);
@@ -44,6 +44,24 @@ public class InputAccess : MonoBehaviour {
         {
             Application.Quit();
         }
+    }
+
+    public void InputPointerKey()
+    {
+        up = false;
+        down = false;
+        left = false;
+        right = false;
+        horizontal = 0;
+        vertical = 0;
+        
+        up |= Input.GetKey(KeyCode.UpArrow);
+        down |= Input.GetKey(KeyCode.DownArrow);
+        left |= Input.GetKey(KeyCode.LeftArrow);
+        right |= Input.GetKey(KeyCode.RightArrow);
+
+        horizontal = Input.GetAxis("Horizontal");
+        vertical = Input.GetAxis("Vertical");
     }
 
     public void InputCameraKey()

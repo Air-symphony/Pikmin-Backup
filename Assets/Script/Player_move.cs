@@ -14,7 +14,7 @@ public class Player_move : MonoBehaviour {
     private GameObject indepedent;
     private Vector3 move;
     private const float GRAVITY = 9.8f;
-    private float moveSpeed = 8.0f;
+    private float moveSpeed = 10.0f;
     private int controlPik_MAX = 5;//同時射出限界値
     private GameObject[] controlPik;
     private GameObject whi;
@@ -67,37 +67,11 @@ public class Player_move : MonoBehaviour {
    
     private void PlayerMove()
     {
-        float x, z;
-        x = input.horizontal;
-        z = input.vertical;
-        if (x != 0 || z != 0)  transform.right = cam.transform.right;
-
-        if (input.up || input.down || input.left || input.right)
+        transform.LookAt(new Vector3(pointer.transform.position.x, transform.position.y, pointer.transform.position.z));
+        Vector3 move = new Vector3(0, 0, 0);
+        if (Vector3.Distance(pointer.transform.position, transform.position) > 8.0f)
         {
-            if (input.up) z = -1;
-            else if (input.down) z = 1;
-            if (input.left) x = -1;
-            else if (input.right) x = 1;
-
-            transform.right = cam.transform.right;
-        }
-        move = new Vector3(x, 0, -z);
-        /*
-        v0 += move;
-        if (v0.z > v.z)
-        {
-            v0.z = v.z;
-        }
-        else if (v0.z < -v.z)
-        {
-            v0.z = -v.z;
-        }
-        SetThrowPoint(v0);
-        //transform.LookAt(new Vector3(pointer.transform.position.x,0, pointer.transform.position.z));*/
-        move = transform.TransformDirection(move * moveSpeed);//Playerの向きの合うmoveに変更
-       if (move.magnitude > 0.1f)
-        {
-            transform.rotation = Quaternion.LookRotation(move);//向き先、一瞬
+            move = transform.forward * moveSpeed;
         }
         move.y -= GRAVITY;
         player.Move(move * Time.deltaTime);
@@ -285,7 +259,8 @@ public class Player_move : MonoBehaviour {
     {
         float maxr = 6.0f;
         float speed = 5.0f;
-        GameObject pointer = transform.FindChild("Throwpoint").gameObject;
+        GameObject pointer = GameObject.Find("Throwpoint");
+            //transform.FindChild("Throwpoint").gameObject;
         if (key)//押した1Fのみ
         {
             start_whi = true;

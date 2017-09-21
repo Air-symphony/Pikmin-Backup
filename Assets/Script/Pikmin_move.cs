@@ -157,8 +157,8 @@ public class Pikmin_move : MonoBehaviour {
         //初期設定
         if (!flying)
         {
-            status = false;
-            hitWall = false;
+            t = 0.0f;
+            status = hitWall = false;
             transform.rotation = player.transform.rotation;
             transform.position = player.transform.position + player.transform.TransformDirection(new Vector3(0, 0, -1));
             start_position = d_position = transform.position;
@@ -180,6 +180,10 @@ public class Pikmin_move : MonoBehaviour {
         RaycastHit[] hits = Physics.RaycastAll(d_position, down, down.magnitude);
         for (int i = hits.Length - 1; i >= 0; i--)
         {
+            Debug.Log("Ander_hits[" + i + "]:" + hits[i].collider.name);
+        }
+        for (int i = hits.Length - 1; i >= 0; i--)
+        {
             if (hitObject.collider.tag == "Field" || hitObject.collider.tag == "Obstacle")
             {
                 Debug.Log("着地");
@@ -195,7 +199,7 @@ public class Pikmin_move : MonoBehaviour {
             hits = Physics.RaycastAll(d_position, deltaPos - d_position, Vector3.Distance(d_position, deltaPos));
             for (int i = hits.Length - 1; i >= 0; i--)
             {
-                Debug.Log("hits[" + i + "]:" + hits[i].collider.name);
+                Debug.Log("Wall_hits[" + i + "]:" + hits[i].collider.name);
             }
             for (int i = hits.Length - 1; i >= 0; i--)
             {
@@ -216,7 +220,6 @@ public class Pikmin_move : MonoBehaviour {
         //想定外の場合,、不時着
         if (transform.position.y < -2.0f)
         {
-            t = 0.0f;
             transform.position = deltaPos + new Vector3(0, 2.0f * transform.localScale.y, 0);
             Debug.Log(transform.name + " didn't arrive.");
             flying = false;

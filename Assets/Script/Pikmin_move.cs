@@ -15,6 +15,7 @@ public class Pikmin_move : MonoBehaviour {
     private const float shotSpeed = 2.0f;
     public bool flying;//飛んでいるかどうか
     private RaycastHit hitObject;//投げて当たった物体
+    private bool hitWall;
     private Pointer pointer;
     private const float flying_time = 2.0f;
     private float t = 0.0f;
@@ -31,11 +32,14 @@ public class Pikmin_move : MonoBehaviour {
     //private GameObject ObstacleList;
     //test
     private CharacterController pikmin;
-    private float move_t = 0.0f; 
+    private float move_t = 0.0f;
+
+    private float body_size;
 
     // Use this for initialization
     void Start () {
         pikmin = GetComponent<CharacterController>();
+        body_size = GetComponent<Renderer>().bounds.size.x;
 
         player = GameObject.Find("Player");
         point = GameObject.Find("PlayerBack");
@@ -154,33 +158,62 @@ public class Pikmin_move : MonoBehaviour {
         if (!flying)
         {
             status = false;
+            hitWall = false;
             transform.rotation = player.transform.rotation;
             transform.position = player.transform.position + player.transform.TransformDirection(new Vector3(0, 0, -1));
             start_position = d_position = transform.position;
             //Z軸の初速度の設定、ワールド座標からローカルへ変更
             v_0.z = transform.InverseTransformDirection(pointer.transform.position - transform.position).z / flying_time;
+            Debug.Log("v_0.z = " + v_0.z);
         }
+        
+        //初期座標から変化した座標 = 射出初期座標 + 移動先のベクトル
         t += shotSpeed * Time.deltaTime;
         float y = v_0.y * t - 0.5f * 9.8f * t * t;
-
-        //初期座標から変化した座標 = 射出初期座標 + 移動先のベクトル
         Vector3 deltaPos = start_position + transform.TransformDirection(new Vector3(0, y, v_0.z * t));//初期座標から変化した座標
-        //transform.position = start + deltaPos;//初期座標から変化した座標
 
-        Debug.DrawRay(d_position, (deltaPos - d_position), Color.green, 1.0f);//Rayの描画
-        RaycastHit[] hits;
-        hits = Physics.RaycastAll(d_position, deltaPos - d_position, Vector3.Distance(d_position, deltaPos));
+        //(42.4, 0.1, 0.0) => (53.6, -2.4, 0.0) 不正な値
+        Debug.Log(gameObject.name + "," + transform.position + "=>" + deltaPos);
+        Debug.Log(new Vector3(0, y, v_0.z * t) + " => " + transform.TransformDirection(new Vector3(0, y, v_0.z * t)));
+        //床があるかどうか、あれば終了
+        Vector3 down = transform.InverseTransformDirection(new Vector3(0, -0.5f, 0));
+        RaycastHit[] hits = Physics.RaycastAll(d_position, down, down.magnitude);
         for (int i = hits.Length - 1; i >= 0; i--)
         {
-            if (hits[i].collider.tag == "Field" || hits[i].collider.tag == "Obstacle")//床と障害物の判定
+            if (hitObject.collider.tag == "Field" || hitObject.collider.tag == "Obstacle")
             {
-                //transform.position = hits[i].point + new Vector3(0, 1.0f * transform.localScale.y, 0);
-                PositionSetting(hits[i].collider);
-                t = 0.0f;
+                Debug.Log("着地");
+                transform.position = hitObject.point + transform.TransformDirection(new Vector3(0, 1.0f * transform.localScale.y, 0));
                 flying = false;
                 return false;
             }
         }
+        //壁にぶつかったとき、当たった先端からfor
+        Debug.DrawRay(d_position, (deltaPos - d_position), Color.green, 1.0f);//Rayの描画
+        if (hitWall == false)
+        {
+            hits = Physics.RaycastAll(d_position, deltaPos - d_position, Vector3.Distance(d_position, deltaPos));
+            for (int i = hits.Length - 1; i >= 0; i--)
+            {
+                Debug.Log("hits[" + i + "]:" + hits[i].collider.name);
+            }
+            for (int i = hits.Length - 1; i >= 0; i--)
+            {
+                //壁にぶつかった場合
+                if (hits[i].collider.tag == "Field" || hits[i].collider.tag == "Obstacle")//床と障害物の判定
+                {
+                    //当たった場所から少し手前に移動
+                    transform.position = hits[i].point + transform.TransformDirection(new Vector3(0, 0, -1.0f * transform.localScale.z));
+                    Debug.Log(hits[i].collider.name);
+                    Debug.Log(this.gameObject.name + "壁ヒット = " + transform.position);
+
+                    v_0.z = 0.0f;
+                    flying = hitWall = true;
+                    return true;
+                }
+            }
+        }
+        //想定外の場合,、不時着
         if (transform.position.y < -2.0f)
         {
             t = 0.0f;
@@ -189,6 +222,7 @@ public class Pikmin_move : MonoBehaviour {
             flying = false;
             return false;
         }
+        //何にもぶつからずに飛んでいる場合
         transform.position = deltaPos;
         d_position = transform.position;
         flying = true;

@@ -116,7 +116,7 @@ public class Pikmin_move : MonoBehaviour {
             }
         }
     }
-    
+
     private void MoveContoller()
     {
         Vector3 move = new Vector3(0, 0, 0);
@@ -164,7 +164,6 @@ public class Pikmin_move : MonoBehaviour {
             start_position = d_position = transform.position;
             //Z軸の初速度の設定、ワールド座標からローカルへ変更
             v_0.z = transform.InverseTransformDirection(pointer.transform.position - transform.position).z / flying_time;
-            Debug.Log("v_0.z = " + v_0.z);
         }
         
         //初期座標から変化した座標 = 射出初期座標 + 移動先のベクトル
@@ -172,51 +171,46 @@ public class Pikmin_move : MonoBehaviour {
         float y = v_0.y * t - 0.5f * 9.8f * t * t;
         Vector3 deltaPos = start_position + transform.TransformDirection(new Vector3(0, y, v_0.z * t));//初期座標から変化した座標
 
-        //(42.4, 0.1, 0.0) => (53.6, -2.4, 0.0) 不正な値
-        Debug.Log(gameObject.name + "," + transform.position + "=>" + deltaPos);
-        Debug.Log(new Vector3(0, y, v_0.z * t) + " => " + transform.TransformDirection(new Vector3(0, y, v_0.z * t)));
-        //床があるかどうか、あれば終了
-        Vector3 down = transform.InverseTransformDirection(new Vector3(0, -0.5f, 0));
-        RaycastHit[] hits = Physics.RaycastAll(d_position, down, down.magnitude);
-        for (int i = hits.Length - 1; i >= 0; i--)
-        {
-            Debug.Log("Ander_hits[" + i + "]:" + hits[i].collider.name);
-        }
-        for (int i = hits.Length - 1; i >= 0; i--)
-        {
-            if (hitObject.collider.tag == "Field" || hitObject.collider.tag == "Obstacle")
-            {
-                Debug.Log("着地");
-                transform.position = hitObject.point + transform.TransformDirection(new Vector3(0, 1.0f * transform.localScale.y, 0));
-                flying = false;
-                return false;
-            }
-        }
-        //壁にぶつかったとき、当たった先端からfor
-        Debug.DrawRay(d_position, (deltaPos - d_position), Color.green, 1.0f);//Rayの描画
+        RaycastHit[] hits;
+        //放物線を描き、線上に物体が存在した場合
+        Debug.DrawRay(d_position, (deltaPos - d_position), Color.green, 3.0f);//Rayの描画
         if (hitWall == false)
         {
             hits = Physics.RaycastAll(d_position, deltaPos - d_position, Vector3.Distance(d_position, deltaPos));
-            for (int i = hits.Length - 1; i >= 0; i--)
-            {
-                Debug.Log("Wall_hits[" + i + "]:" + hits[i].collider.name);
-            }
             for (int i = hits.Length - 1; i >= 0; i--)
             {
                 //壁にぶつかった場合
                 if (hits[i].collider.tag == "Field" || hits[i].collider.tag == "Obstacle")//床と障害物の判定
                 {
                     //当たった場所から少し手前に移動
-                    transform.position = hits[i].point + transform.TransformDirection(new Vector3(0, 0, -1.0f * transform.localScale.z));
-                    Debug.Log(hits[i].collider.name);
-                    Debug.Log(this.gameObject.name + "壁ヒット = " + transform.position);
+                    Vector3 hitpos = hits[i].point + 
+                        (transform.TransformDirection(new Vector3(0, 1.0f * transform.localScale.y, -1.0f * transform.localScale.z)));
 
-                    v_0.z = 0.0f;
+                    transform.position = hitpos;
+                    hitpos.y = start_position.y;
+                    start_position = hitpos;
+                    v_0.z = 0.0f; 
                     flying = hitWall = true;
                     return true;
                 }
             }
         }
+        else//壁に反射後、床があるかどうか、あれば終了
+        {
+            hits = Physics.RaycastAll(d_position, deltaPos - d_position, Vector3.Distance(d_position, deltaPos));
+            
+            for (int i = hits.Length - 1; i >= 0; i--)
+            {
+                if (hits[i].collider.tag == "Field" || hits[i].collider.tag == "Obstacle")
+                {
+                    //Debug.Log("着地");
+                    transform.position = hits[i].point + transform.TransformDirection(new Vector3(0, 1.0f * transform.localScale.y, 0));
+                    flying = false;
+                    return false;
+                }
+            }
+        }
+
         //想定外の場合,、不時着
         if (transform.position.y < -2.0f)
         {

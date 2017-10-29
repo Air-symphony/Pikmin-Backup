@@ -60,7 +60,7 @@ public class Pointer : MonoBehaviour {
             
             //Layer = Fieldの中で、ヒットした場所にポインタを表示
             int layerMask = LayerMask.GetMask("Field");
-            if (Physics.Raycast(apex, Vector3.down, out hitObject, 100, layerMask))
+            if (Physics.Raycast(apex, Vector3.down, out hitObject, 30, layerMask))
             {
                 if (hitObject.transform.tag == "Field" ||
                     hitObject.transform.tag == "Obstacle")

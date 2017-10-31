@@ -10,11 +10,11 @@ public class Player_move : MonoBehaviour {
     private GameObject indepedent;
     private UI ui;
     private GameObject pointer;
-
+    
     private const float GRAVITY = 9.8f;
     public GameObject setpoint;//集合点
     private int distancsetpoint = 2;//z座標の値
-    private float moveSpeed = 10.0f;
+    public float moveSpeed = 10.0f;
     private int controlPik_MAX = 5;//同時射出限界値
     private GameObject[] controlPik;
     private GameObject whi;
@@ -64,7 +64,8 @@ public class Player_move : MonoBehaviour {
     {
         transform.LookAt(new Vector3(pointer.transform.position.x, transform.position.y, pointer.transform.position.z));
         Vector3 move = new Vector3(0, 0, 0);
-        if (Vector3.Distance(pointer.transform.position, transform.position) > 8.0f)
+        if (Vector3.Distance(pointer.transform.position, transform.position)
+            >= pointer.GetComponent<Pointer>().GetmovePointer_r())
         {
             move = transform.forward * moveSpeed;
         }

@@ -5,9 +5,10 @@ public class Pointer : MonoBehaviour {
     private InputAccess input;
     private GameObject player;
     public GameObject cam;
-    
-    float moveSpeed = 30.0f;
-    private Vector3 v_0 = new Vector3(0, 10.0f, 5.0f);
+    private float moveSpeed = 30.0f;
+    private float movePointer_r = 8.0f;
+    private Vector3 v_0 = new Vector3(0, 10.0f, 0.0f);
+
     private RaycastHit hitObject;//外部利用
 
     // Use this for initialization
@@ -28,11 +29,6 @@ public class Pointer : MonoBehaviour {
         float x = 0, z = 0;
         input.InputPointerKey();
 
-        /*
-        x = input.horizontal;
-        z = input.vertical;
-        if (x != 0 || z != 0) transform.right = cam.transform.right;
-        */
         if (input.up || input.down || input.left || input.right)
         {
             if (input.up) z = -1;
@@ -43,13 +39,31 @@ public class Pointer : MonoBehaviour {
             transform.right = cam.transform.right;
         }
         Vector3 move = new Vector3(x, 0, -z).normalized;//単位ベクトル化
-        move = transform.TransformDirection(move * moveSpeed);//自分の向きに合うmoveに変更
 
-        //キー入力を受け付けた後の座標が、半径内かどうか
+        float move_s = 0.0f;
+        //Playerが半径内にいるかどうか
+        Vector3 playerPos = player.transform.position;
+        Vector3 pointerPos = transform.position;
+        playerPos.y = pointerPos.y = 0;
+
+        float distance = Vector3.Distance(playerPos, pointerPos);
+        if (distance <= movePointer_r)
+        {
+            move_s = moveSpeed;
+        }
+        else
+        {
+            move_s = player.GetComponent<Player_move>().moveSpeed;
+        }
+        move = transform.TransformDirection(move * move_s);//自分の向きに合うmoveに変更~= 
         Vector3 move_after = transform.position + move * Time.deltaTime;
-        float distance = Vector3.Distance(move_after, player.transform.position);
+
+        move_after.y = 0;
+        float distance_after = Vector3.Distance(playerPos, move_after);
+
         transform.rotation = Quaternion.Euler(90, 0, -90);//ポイントを正しく表示 
-        if (distance < 9.0f)
+
+        if (distance < movePointer_r + 0.4f || distance > distance_after)
         {
             transform.position = move_after;//移動
 
@@ -57,7 +71,7 @@ public class Pointer : MonoBehaviour {
             Vector3 apex = new Vector3(transform.position.x,
                                         player.transform.position.y + v_0.y,
                                         transform.position.z);
-            
+
             //Layer = Fieldの中で、ヒットした場所にポインタを表示
             int layerMask = LayerMask.GetMask("Field");
             if (Physics.Raycast(apex, Vector3.down, out hitObject, 30, layerMask))
@@ -69,6 +83,11 @@ public class Pointer : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public float GetmovePointer_r()
+    {
+        return movePointer_r;
     }
 
     public RaycastHit getHItObject()

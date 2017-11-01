@@ -61,7 +61,8 @@ public class Obstacle_Push : MonoBehaviour {
             if (pikmin.tag == "Pikmin")
             {
                 if (pikmin.GetComponent<Pikmin_move>().brakeMove == false &&
-                    pikmin.GetComponent<Pikmin_move>().status == false)
+                    pikmin.GetComponent<Pikmin_move>().status == false &&
+                    pikmin.GetComponent<Pikmin_move>().GetFlying() == false)
                 {
                     other.GetComponent<Pikmin_move>().setTarget(this.gameObject);
                     nowPik++;
@@ -79,7 +80,7 @@ public class Obstacle_Push : MonoBehaviour {
 
     public bool Check()
     {
-        return needPik <= nowPik;
+        return (needPik <= nowPik) || obstacle == false;
     }
 
     public void RemoveNowPik()
@@ -90,7 +91,7 @@ public class Obstacle_Push : MonoBehaviour {
     public void Finish()
     {
         //transform.position = endposition;
-        nowPik = 0;
+        nowPik--;
         obstacle = false;
         transform.tag = "Field";
         text.SetActive(false);

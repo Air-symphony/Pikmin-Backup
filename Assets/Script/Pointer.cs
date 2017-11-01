@@ -74,6 +74,7 @@ public class Pointer : MonoBehaviour {
 
             //Layer = Fieldの中で、ヒットした場所にポインタを表示
             int layerMask = LayerMask.GetMask("Field");
+            Debug.DrawRay(apex, Vector3.down * 30, Color.green);//Rayの描画
             if (Physics.Raycast(apex, Vector3.down, out hitObject, 30, layerMask))
             {
                 if (hitObject.transform.tag == "Field" ||

@@ -57,7 +57,8 @@ public class Obstacle_Wall : MonoBehaviour {
         if (pikmin.tag == "Pikmin")
         {
             if (pikmin.GetComponent<Pikmin_move>().brakeMove == false &&
-                pikmin.GetComponent<Pikmin_move>().status == false)
+                pikmin.GetComponent<Pikmin_move>().status == false &&
+                pikmin.GetComponent<Pikmin_move>().GetFlying() == false)
             {
                 other.GetComponent<Pikmin_move>().setTarget(this.gameObject);
                 nowPik++;

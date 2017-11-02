@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pikmin.CSharp", "Pikmin.CSharp.csproj", "{AD1CB3B7-7761-3103-9DB4-74B656A2709E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pikmin.CSharp.Editor", "Pikmin.CSharp.Editor.csproj", "{3AE29E59-7760-4BE8-AC37-65954274D419}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{AD1CB3B7-7761-3103-9DB4-74B656A2709E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD1CB3B7-7761-3103-9DB4-74B656A2709E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD1CB3B7-7761-3103-9DB4-74B656A2709E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AE29E59-7760-4BE8-AC37-65954274D419}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AE29E59-7760-4BE8-AC37-65954274D419}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AE29E59-7760-4BE8-AC37-65954274D419}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AE29E59-7760-4BE8-AC37-65954274D419}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

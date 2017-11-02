@@ -97,6 +97,7 @@ public class UI : MonoBehaviour
             {
                 onion.Take(-move);
             }
+            Debug.Log("Close");
             open = false;
         }
         if (input.down)//排出
@@ -121,9 +122,9 @@ public class UI : MonoBehaviour
                 StartCoroutine("errorMessage");
             }
         }
-        menu.transform.FindChild("Text_onion").GetComponent<Text>().text = (onion.GetKeepPikmin() - move) + "";//中身
-        menu.transform.FindChild("Text_move").GetComponent<Text>().text = move + "";//排出数
-        menu.transform.FindChild("Text_out").GetComponent<Text>().text = (count + move) + "";//外の合計
+        menu.transform.Find("Text_onion").GetComponent<Text>().text = (onion.GetKeepPikmin() - move) + "";//中身
+        menu.transform.Find("Text_move").GetComponent<Text>().text = move + "";//排出数
+        menu.transform.Find("Text_out").GetComponent<Text>().text = (count + move) + "";//外の合計
     }
 
     public void ChangeMode()//cameramode

@@ -5,7 +5,7 @@ public class Pointer : MonoBehaviour {
     private InputAccess input;
     private GameObject player;
     public GameObject cam;
-    private float moveSpeed = 30.0f;
+    private float moveSpeed = 50.0f;
     private float movePointer_r = 8.0f;
     private Vector3 v_0 = new Vector3(0, 10.0f, 0.0f);
 
@@ -15,6 +15,7 @@ public class Pointer : MonoBehaviour {
     void Start () {
         input = new InputAccess();
         player = GameObject.Find("Player");
+        transform.position = player.transform.position + Vector3.forward;
     }
 
     // Update is called once per frame
@@ -36,6 +37,12 @@ public class Pointer : MonoBehaviour {
             if (input.left) x = -1;
             else if (input.right) x = 1;
             //カメラと軸を合わせる
+            transform.right = cam.transform.right;
+        }
+        if (input.horizontal != 0 || input.vertical != 0)
+        {
+            x = input.horizontal;
+            z = input.vertical;
             transform.right = cam.transform.right;
         }
         Vector3 move = new Vector3(x, 0, -z).normalized;//単位ベクトル化

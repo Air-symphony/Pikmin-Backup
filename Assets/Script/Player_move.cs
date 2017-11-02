@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Player_move : MonoBehaviour {
     private CharacterController player;
+    private Animator animator;
     private InputAccess input;
     public GameObject cam;
     public GameObject whistle;
@@ -26,6 +27,7 @@ public class Player_move : MonoBehaviour {
     // Use this for initialization
     void Start () {
         player = GetComponent<CharacterController>();
+        this.animator = GetComponent<Animator>();
         follow = GameObject.Find("Follow");
         indepedent = GameObject.Find("Indepedent");
         controlPik = new GameObject[controlPik_MAX];
@@ -42,7 +44,7 @@ public class Player_move : MonoBehaviour {
         if (Time.timeScale != 0.0f)
         {
             PlayerMove();
-            Setpoint();
+            //Setpoint();
             RayCastFloor(input.decide);//パネルの確認
             //StartCoroutine("rayCastFloor");
             ThrowPikmin(input.decide);//射出
@@ -68,6 +70,11 @@ public class Player_move : MonoBehaviour {
             >= pointer.GetComponent<Pointer>().GetmovePointer_r())
         {
             move = transform.forward * moveSpeed;
+            this.animator.SetBool("IsRun", true);
+        }
+        else
+        {
+            this.animator.SetBool("IsRun", false);
         }
         move.y -= GRAVITY;
         player.Move(move * Time.deltaTime);
@@ -188,6 +195,7 @@ public class Player_move : MonoBehaviour {
     {
         if (key && !ui.open)
         {
+            //this.animator.SetBool("IsJump", true);
             GameObject obj = Shootable();//いない場合はnull
             if (obj != null)
             {
@@ -325,13 +333,11 @@ public class Player_move : MonoBehaviour {
     private void Setpoint()
     {
         distancsetpoint = follow.transform.childCount / 30 + 1;
-        if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
-        {
-            if (Input.GetAxis("Horizontal_R") == 0 && Input.GetAxis("Vertical_R") == 0)
+        if (input.horizontal_R == 0 && input.vertical_R == 0)
             setpoint.transform.localPosition = new Vector3(0, 0, -distancsetpoint);
-        }
+        
         float max_r = 10.0f;
-        Vector3 move = new Vector3(Input.GetAxis("Horizontal_R"), 0, -Input.GetAxis("Vertical_R"));
+        Vector3 move = new Vector3(input.horizontal_R, 0, -input.vertical_R);
         move = cam.transform.TransformDirection(move) * Time.deltaTime * 5.0f;
         if (Vector3.Distance(setpoint.transform.position + move, transform.position) < max_r)
         {

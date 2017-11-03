@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Pikmin_move : MonoBehaviour {
     private GameObject player;
-    private GameObject point;
+    public GameObject point;
     private GameObject follow;
     private GameObject indepedent;
     private float moveSpeed = 7.0f;
@@ -26,7 +26,7 @@ public class Pikmin_move : MonoBehaviour {
     private bool carryMove = false;//運んでいるかどうか
     private GameObject ItemList;
     //---MoveObstacle()--------------------
-   public bool brakeMove = false;//障害物を処理しているか
+    public bool brakeMove = false;//障害物を処理しているか
     //
     private GameObject balance;
     //private GameObject ObstacleList;
@@ -42,7 +42,7 @@ public class Pikmin_move : MonoBehaviour {
         body_size = GetComponent<Renderer>().bounds.size.x;
 
         player = GameObject.Find("Player");
-        point = GameObject.Find("PlayerBack");
+        point = GameObject.Find("_PlayerBack");
         follow = GameObject.Find("Follow");
         indepedent = GameObject.Find("Indepedent");
         ItemList = GameObject.Find("ItemList");

@@ -44,7 +44,7 @@ public class Player_move : MonoBehaviour {
         if (Time.timeScale != 0.0f)
         {
             PlayerMove();
-            //Setpoint();
+            Setpoint();
             RayCastFloor(input.decide);//パネルの確認
             //StartCoroutine("rayCastFloor");
             ThrowPikmin(input.decide);//射出

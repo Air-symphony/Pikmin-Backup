@@ -387,6 +387,10 @@
     <None Include="Assets\Free_Rocks\Standard Assets\Effects\ToonShading\Shaders\ToonBasicOutline.shader" />
     <None Include="Assets\Free_Rocks\Standard Assets\Effects\ToonShading\Shaders\ToonLit.shader" />
     <None Include="Assets\Free_Rocks\Standard Assets\Effects\ToonShading\Shaders\ToonLitOutline.shader" />
+    <None Include="Assets\Mareials\SD_Character\ReadMe.files\colorschememapping.xml" />
+    <None Include="Assets\Mareials\SD_Character\ReadMe.files\filelist.xml" />
+    <None Include="Assets\Mareials\SD_Character\ReadMe.files\item0006.xml" />
+    <None Include="Assets\Mareials\SD_Character\ReadMe.files\props007.xml" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramCompute.compute" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramRender.shader" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\ParadeRender.shader" />
@@ -427,10 +431,6 @@
     <None Include="Assets\PostProcessing\Resources\Shaders\Tonemapping.cginc" />
     <None Include="Assets\PostProcessing\Resources\Shaders\Uber.shader" />
     <None Include="Assets\PostProcessing\Resources\Shaders\UberSecondPass.cginc" />
-    <None Include="Assets\mareials\SD_Character\ReadMe.files\colorschememapping.xml" />
-    <None Include="Assets\mareials\SD_Character\ReadMe.files\filelist.xml" />
-    <None Include="Assets\mareials\SD_Character\ReadMe.files\item0006.xml" />
-    <None Include="Assets\mareials\SD_Character\ReadMe.files\props007.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

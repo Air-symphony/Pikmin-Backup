@@ -6,15 +6,19 @@ public class Enemy_Move : MonoBehaviour {
     private CharacterController character;
     private Animator animator;
     private GameObject player;
+    private Collider attackArea;
     public float moveSpeed = 2.0f;
     float move_t = 0.0f;
+
+    private bool attack = false;
 
     // Use this for initialization
     void Start () {
         character = GetComponent<CharacterController>();
         this.animator = GetComponent<Animator>();
         player = GameObject.Find("Player");
-	}
+        attackArea = transform.GetComponentInChildren<Collider>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -24,7 +28,6 @@ public class Enemy_Move : MonoBehaviour {
     private void MoveContoller()
     {
         Vector3 move = new Vector3(0, 0, 0);
-        //this.animator.SetBool("IsMove", false);
         if (Vector3.Distance(player.transform.position, transform.position) > 3.0f)
         {
             this.animator.SetBool("IsMove", true);
@@ -41,7 +44,6 @@ public class Enemy_Move : MonoBehaviour {
 
     private Vector3 Gravity(Vector3 move)
     {
-        //Vector3 move = new Vector3(0, 0, 0);
         RaycastHit hit;
         Vector3 down = transform.InverseTransformDirection(new Vector3(0, -0.5f, 0));
         Debug.DrawRay(transform.position, down);
@@ -55,5 +57,22 @@ public class Enemy_Move : MonoBehaviour {
         }
         move_t += Time.deltaTime;
         return move -= new Vector3(0, 0.5f * 9.8f * move_t * move_t, 0);
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        GameObject _object = other.gameObject;
+        if (_object.tag == "Pikmin" || _object.tag == "Player")
+        {
+            this.animator.SetBool("Attack", true);
+        }
+    }
+
+    IEnumerator Attack()
+    {
+        yield return new WaitForSeconds(1.0f);
+        Debug.Log("Enemy attacks");
+
+        yield break;
     }
 }

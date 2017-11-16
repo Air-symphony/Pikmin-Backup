@@ -10,6 +10,7 @@ public class Onion : MonoBehaviour {
     private int start_num = 10;
 
     public GameObject player;
+    private int num = 0;
 
     // Use this for initialization
     void Start()
@@ -32,21 +33,13 @@ public class Onion : MonoBehaviour {
 
     }
 
-    public void Add(int num)
+    public void MoveAdd(int num)
     {
-        for (int i = 1; i <= num; i++)
-        {
-            float rndx = Random.Range(-3.0f, 3.0f);
-            float rndz = Random.Range(-3.0f, 3.0f);
-            GameObject obj = Instantiate(pikmin, transform.position + new Vector3(rndx, -3.0f, rndz), transform.rotation) as GameObject;
-            obj.GetComponent<Pikmin_move>().status = true;
-            int number = follow.transform.childCount + indepedent.transform.childCount + i;
-            obj.transform.name = "Pikmin(" + number + ")";
-            keep_Pikmin--;
-        }
+        this.num = num;
+        StartCoroutine("Add");
     }
 
-    public void Take(int num)
+    public void MoveTake(int num)
     {
         int i = 0;
         foreach (Transform child in follow.transform)
@@ -69,5 +62,37 @@ public class Onion : MonoBehaviour {
     public int GetMax()
     {
         return feild_Max;
+    }
+
+    IEnumerator Add()
+    {
+        for (int i = 1; i <= num; i++)
+        {
+            float rndx = Random.Range(-3.0f, 3.0f);
+            float rndz = Random.Range(-3.0f, 3.0f);
+            GameObject obj = Instantiate(pikmin, transform.position + new Vector3(rndx, -1.0f, rndz), transform.rotation) as GameObject;
+            obj.GetComponent<Pikmin_move>().status = true;
+            int number = follow.transform.childCount + indepedent.transform.childCount + i;
+            obj.transform.name = "Pikmin(" + number + ")";
+            keep_Pikmin--;
+            yield return new WaitForSeconds(0.01f);
+        }
+        yield break;
+    }
+
+    IEnumerator Take()
+    {
+        for (int i = 1; i <= num; i++)
+        {
+            float rndx = Random.Range(-3.0f, 3.0f);
+            float rndz = Random.Range(-3.0f, 3.0f);
+            GameObject obj = Instantiate(pikmin, transform.position + new Vector3(rndx, -1.0f, rndz), transform.rotation) as GameObject;
+            obj.GetComponent<Pikmin_move>().status = true;
+            int number = follow.transform.childCount + indepedent.transform.childCount + i;
+            obj.transform.name = "Pikmin(" + number + ")";
+            keep_Pikmin--;
+            yield return new WaitForSeconds(0.01f);
+        }
+        yield break;
     }
 }

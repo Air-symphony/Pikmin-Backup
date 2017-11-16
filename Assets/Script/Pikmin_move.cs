@@ -29,7 +29,6 @@ public class Pikmin_move : MonoBehaviour {
     public bool brakeMove = false;//障害物を処理しているか
     //
     private GameObject balance;
-    //private GameObject ObstacleList;
     //test
     private CharacterController pikmin;
     private float move_t = 0.0f;
@@ -179,8 +178,15 @@ public class Pikmin_move : MonoBehaviour {
             hits = Physics.RaycastAll(d_position, deltaPos - d_position, Vector3.Distance(d_position, deltaPos));
             for (int i = hits.Length - 1; i >= 0; i--)
             {
+                Debug.Log(hits[i].collider.name + " : " + hits[i].collider.tag);
+                if (hits[i].collider.tag == "Enemy")
+                {
+                    transform.position = hits[i].point;
+                    flying = hitWall = false;
+                    return false;
+                }
                 //壁にぶつかった場合
-                if (hits[i].collider.tag == "Field" || hits[i].collider.tag == "Obstacle")//床と障害物の判定
+                else if (hits[i].collider.tag == "Field" || hits[i].collider.tag == "Obstacle")//床と障害物の判定
                 {
                     //当たった場所から少し手前に移動
                     Vector3 hitpos = hits[i].point + 
@@ -206,6 +212,12 @@ public class Pikmin_move : MonoBehaviour {
                     //Debug.Log("着地");
                     transform.position = hits[i].point + transform.TransformDirection(new Vector3(0, 1.0f * transform.localScale.y, 0));
                     flying = false;
+                    return false;
+                }
+                else if (hits[i].collider.tag == "Enemy")
+                {
+                    transform.position = hits[i].point;
+                    flying = hitWall = false;
                     return false;
                 }
             }

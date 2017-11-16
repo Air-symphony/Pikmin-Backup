@@ -16,11 +16,13 @@ public class Player_move : MonoBehaviour {
     public GameObject setpoint;//集合点
     private int distancsetpoint = 2;//z座標の値
     public float moveSpeed = 10.0f;
-    private int controlPik_MAX = 5;//同時射出限界値
+    public int controlPik_MAX = 5;//同時射出限界値
     private GameObject[] controlPik;
     private GameObject whi;
     private bool start_whi;
     private float whistle_t;
+
+    private new AudioSource[] audio;
 
     private GameObject balance;
 
@@ -33,6 +35,7 @@ public class Player_move : MonoBehaviour {
         controlPik = new GameObject[controlPik_MAX];
         ui = GameObject.Find("Canvas").GetComponent<UI>();
         pointer = GameObject.Find("Throwpoint");
+        audio = GetComponents<AudioSource>();
 
         input = new InputAccess();
     }
@@ -195,6 +198,7 @@ public class Player_move : MonoBehaviour {
     {
         if (key && !ui.open)
         {
+            audio[0].Play();
             //this.animator.SetBool("IsJump", true);
             GameObject obj = Shootable();//いない場合はnull
             if (obj != null)
@@ -304,25 +308,11 @@ public class Player_move : MonoBehaviour {
         }
     }
 
-    /*private void moveMeeting()
-    {
-        float r = 0.8f;
-        foreach (Transform child in indepedent.transform)
-        {
-            if (!child.GetComponent<pikmin_move>().GetFlying())
-            {
-                if (r > Vector3.Distance(child.transform.position, transform.position))//半径以内のpikminを探す
-                {
-                    child.GetComponent<pikmin_move>().status = true;
-                }
-            }
-        }
-    }*/
-
     private void Wait(bool key)
     {
         if (key)
         {
+            audio[1].Play();
             foreach (Transform child in follow.transform)
             {
                 child.GetComponent<Pikmin_move>().status = false;   
@@ -332,7 +322,8 @@ public class Player_move : MonoBehaviour {
 
     private void Setpoint()
     {
-        distancsetpoint = follow.transform.childCount / 30 + 1;
+        //distancsetpoint = (int)(follow.transform.childCount / 100.0) + 1;
+        distancsetpoint = 1;
         if (input.horizontal_R == 0 && input.vertical_R == 0)
             setpoint.transform.localPosition = new Vector3(0, 0, -distancsetpoint);
         

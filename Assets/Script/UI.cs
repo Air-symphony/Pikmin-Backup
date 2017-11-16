@@ -91,13 +91,12 @@ public class UI : MonoBehaviour
         {
             if (move >= 0)
             {
-                onion.Add(move);
+                onion.MoveAdd(move);
             }
             else
             {
-                onion.Take(-move);
+                onion.MoveTake(-move);
             }
-            Debug.Log("Close");
             open = false;
         }
         if (input.down)//排出
@@ -186,5 +185,6 @@ public class UI : MonoBehaviour
         //エラーメッセージ
         Debug.Log("無効な処理");
         yield return new WaitForSeconds(1.0f);
+        yield break;
     }
 }

@@ -36,7 +36,7 @@ public class InputAccess : MonoBehaviour {
         {
             Application.Quit();
         }
-        //DownKeyCheck();
+        DownKeyCheck();
     }
 
     public void InputPointerKey()
